@@ -950,7 +950,7 @@ function drawLayers(nodesFC, edgesFC){
   edgeLayer.eachLayer(l=>setEdgeStyle(l,"base"));
 
   // One blue translucent area groups the full connected parent-child system.
-  drawFamilySystems();
+  // drawFamilySystems();
 
   nodeLayer=L.geoJSON(nodesFC,{
     pointToLayer:(f,ll)=>L.circleMarker(ll,nodeStyle(f)),

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GBMIM Reservoir Atlas</title>
+<title>RIQSA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -18,6 +18,8 @@
     --accent2:    #4ade80;
     --accent3:    #fb923c;
     --accent4:    #a78bfa;   /* storage — violet */
+    --accent5:    #22d3ee;   /* upstream drainage — cyan */
+    --accent6:    #facc15;   /* catchment area — yellow */
     --text:       #e2e8f0;
     --muted:      #64748b;
     --map-bg:     #0e1520;
@@ -46,6 +48,8 @@
     --accent2:    #16a34a;
     --accent3:    #ea580c;
     --accent4:    #7c3aed;
+    --accent5:    #0891b2;
+    --accent6:    #ca8a04;
     --text:       #0f172a;
     --muted:      #64748b;
     --subnav-bg:      #fff4ec;
@@ -134,6 +138,11 @@
   .page-overlay h3.section-head { font-family:'Bitter',serif; font-size:19px; font-weight:700; color:var(--text); margin:40px 0 6px; }
   .page-overlay .lead { font-size:14px; color:var(--muted); margin-bottom:32px; line-height:1.7; max-width:680px; }
   .page-overlay .divider { width:48px; height:3px; background:var(--accent); border-radius:2px; margin-bottom:28px; }
+  .ov-list { list-style:none; max-width:680px; margin:0 0 24px; display:flex; flex-direction:column; gap:8px; }
+  .ov-list li { font-size:14px; color:var(--muted); line-height:1.6; padding-left:16px; position:relative; }
+  .ov-list li::before { content:'›'; position:absolute; left:2px; color:var(--accent); font-weight:700; }
+  .ov-list li b { color:var(--text); font-weight:600; }
+  .ov-formula { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; color:var(--text); background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; display:inline-block; margin:-14px 0 18px; }
   .card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; max-width:900px; margin-bottom:40px; }
   .info-card-page { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:20px; }
   .info-card-page .card-num { font-family:'Bitter',serif; font-size:28px; font-weight:700; color:var(--accent); line-height:1; margin-bottom:4px; }
@@ -420,7 +429,7 @@
 
 <!-- ═══════ NAV ═══════ -->
 <nav>
-  <span class="nav-title"><span>RIQSA</span> (River &amp; Reservoir Analysis)</span>
+  <span class="nav-title"><span>RIQSA</span> (Reservoir Impact Quantification in South Asia)</span>
   <div class="nav-links">
     <button class="nav-link active" onclick="showPage('map')">Home</button>
     <button class="nav-link" onclick="showPage('impact')">Impact Tracing</button>
@@ -444,26 +453,37 @@
 <!-- ═══════ OVERVIEW (merged Summary + Details) ═══════ -->
 <div class="page-overlay" id="page-overview">
   <button class="close-page" onclick="showPage('map')">✕ Close</button>
-  <h2>GBMIM Reservoir Atlas</h2>
+  <h2>About RIQSA</h2>
   <div class="divider"></div>
-  <p class="lead">An interactive hydrological atlas of 772 reservoirs across South and Southeast Asia. Explore watershed boundaries, downstream river networks, runoff timeseries, and storage data.</p>
+  <p class="lead"><b style="color:var(--text);font-weight:600;">RIQSA</b> (Reservoir Impact Quantification in South Asia) is an interactive atlas of reservoirs across the Ganges–Brahmaputra–Meghna, Irrawaddy and Mekong (GBMIM) basins. It shows how reservoirs store and release water, and how that regulation reaches rivers further downstream.</p>
+
   <div class="card-grid">
     <div class="info-card-page"><div class="card-num">772</div><div class="card-label">Reservoirs</div></div>
-    <div class="info-card-page"><div class="card-num">772</div><div class="card-label">Watersheds</div></div>
-    <div class="info-card-page"><div class="card-num">772</div><div class="card-label">Downstream Paths</div></div>
     <div class="info-card-page"><div class="card-num">10</div><div class="card-label">Countries</div></div>
+    <div class="info-card-page"><div class="card-num">4</div><div class="card-label">Seasons</div></div>
+    <div class="info-card-page"><div class="card-num">2001–2021</div><div class="card-label">Study period</div></div>
   </div>
 
-  <h3 class="section-head">Dataset Details</h3>
-  <p class="lead">Reservoir locations from GRanD v1.3 supplemented with the GBMIM dataset covering Ganges–Brahmaputra–Meghna–Irrawaddy–Mekong systems. Watershed delineations use HydroSHEDS DEM at 15 arc-second resolution.</p>
-  <div class="card-grid">
-    <div class="info-card-page"><div class="card-num">15″</div><div class="card-label">DEM Resolution</div></div>
-    <div class="info-card-page"><div class="card-num">WGS84</div><div class="card-label">Coordinate System</div></div>
-    <div class="info-card-page"><div class="card-num">GRanD</div><div class="card-label">Primary Source</div></div>
-    <div class="info-card-page"><div class="card-num">v1.1</div><div class="card-label">Dataset Version</div></div>
-  </div>
+  <h3 class="section-head">What you can do</h3>
+  <ul class="ov-list">
+    <li><b>Home</b>: pick a reservoir to see its watershed, catchment, upstream drainage and downstream river path, plus runoff, precipitation and storage over time.</li>
+    <li><b>Impact Tracing</b>: pick a downstream reservoir to see which upstream reservoirs affect it most in a given period and season.</li>
+  </ul>
 
-  <p class="lead">New here? See the <a href="javascript:void(0)" onclick="showPage('howto')" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);">How to Use</a> page for a quick tour of every feature.</p>
+  <h3 class="section-head">How impact is measured</h3>
+  <p class="lead">For each season, a reservoir's change in stored water is compared with the runoff reaching the downstream reservoir:</p>
+  <p class="ov-formula">impact (%) = 100 × storage change ÷ seasonal runoff</p>
+  <p class="lead">A <span style="color:var(--accent2);font-weight:600;">positive</span> value means the reservoir held water back; a <span style="color:var(--accent3);font-weight:600;">negative</span> value means it released stored water. Results are averaged over four periods (2001–2005, 2006–2010, 2011–2015, 2016–2021) and four seasons (Dry, Pre-monsoon, Monsoon, Winter).</p>
+
+  <h3 class="section-head">Data</h3>
+  <ul class="ov-list">
+    <li><b>Reservoirs &amp; dams</b>: Global Dam Watch (GDW)</li>
+    <li><b>Reservoir storage</b>: Global Water Watch (GWW)</li>
+    <li><b>River network &amp; catchments</b>: MERIT-Hydro</li>
+    <li><b>Country borders</b>: Natural Earth</li>
+  </ul>
+
+  <p class="lead" style="margin-top:28px;">New here? See <a href="javascript:void(0)" onclick="showPage('howto')" style="color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent);">How to read</a> for a quick tour.</p>
 </div>
 
 <!-- ═══════ HOW TO USE ═══════ -->
@@ -485,7 +505,7 @@
         <span class="ic-swatch-green"></span><span class="howto-mini-tag" style="color:var(--accent2);border-color:rgba(74,222,128,.4)">Watershed</span>
         <span class="ic-swatch-org"></span><span class="howto-mini-tag" style="color:var(--accent3);border-color:rgba(251,146,60,.4)">Downstream</span>
       </div>
-      <div class="howto-body">When you select a reservoir, its <b>watershed boundary</b> (green) and <b>downstream river path</b> (orange) are drawn on the map. Toggle either layer with the switches in the sidebar.</div>
+      <div class="howto-body">When you select a reservoir, its <b>watershed boundary</b> (green) and <b>downstream river path</b> (orange) are drawn on the map. Turn on <b>Upstream Drainage</b> (cyan) to see the river paths that flow into it, or <b>Catchment Area</b> (yellow) to see its merged catchment boundary. Toggle any layer with the switches in the sidebar.</div>
     </div>
     <div class="howto-card">
       <div class="howto-step">Step 3</div>
@@ -567,6 +587,15 @@
     <p class="lead" style="margin-bottom:18px;">Have a question, correction, or collaboration idea? Send us a message at either address below.</p>
 
     <div class="contact-rows">
+      
+      <div class="contact-row">
+        <span class="cr-icon">📧</span>
+        <div class="cr-body">
+          <div class="cr-label">Email</div>
+          <div class="cr-val">Nishan Biswas (<a href="mailto:nishan.wre.buet@gmail.com">nishan.wre.buet@gmail.com</a>)</div>
+        </div>
+      </div>
+
       <div class="contact-row">
         <span class="cr-icon">📧</span>
         <div class="cr-body">
@@ -574,11 +603,36 @@
           <div class="cr-val">Protik Bose Pranto (<a href="mailto:ppranto@asu.edu">ppranto@asu.edu</a>)</div>
         </div>
       </div>
+
       <div class="contact-row">
         <span class="cr-icon">📧</span>
         <div class="cr-body">
           <div class="cr-label">Email</div>
-          <div class="cr-val">Nishan Biswas (<a href="mailto:nishan.wre.buet@gmail.com">nishan.wre.buet@gmail.com</a>)</div>
+          <div class="cr-val">Maruf Ahmed (<a href="mailto:marufahmedbuet175@gmail.com">marufahmedbuet175@gmail.com</a>)</div>
+        </div>
+      </div>
+
+      <div class="contact-row">
+        <span class="cr-icon">📧</span>
+        <div class="cr-body">
+          <div class="cr-label">Email</div>
+          <div class="cr-val">Smita Sharma (<a href="mailto:sharma.smita.du@gmail.com">sharma.smita.du@gmail.com</a>)</div>
+        </div>
+      </div>
+
+      <div class="contact-row">
+        <span class="cr-icon">📧</span>
+        <div class="cr-body">
+          <div class="cr-label">Email</div>
+          <div class="cr-val">Md. Rezaul Haider (<a href="mailto:rezaulwre@gmail.com">rezaulwre@gmail.com</a>)</div>
+        </div>
+      </div>
+
+      <div class="contact-row">
+        <span class="cr-icon">📧</span>
+        <div class="cr-body">
+          <div class="cr-label">Email</div>
+          <div class="cr-val">Suchi Nandi Puja (<a href="mailto:suchipuja30@gmail.com">suchipuja30@gmail.com</a>)</div>
         </div>
       </div>
     </div>
@@ -626,12 +680,20 @@
 
       <div class="layer-toggles">
         <div class="layer-toggle-row">
-          <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--accent2)"></div>Show Reservoir Region</div>
+          <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--accent2)"></div>Show Reservoir Extent</div>
           <label class="toggle-switch"><input type="checkbox" id="toggle-watershed" checked onchange="refreshLayers()"/><span class="toggle-slider"></span></label>
         </div>
         <div class="layer-toggle-row">
           <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--accent3)"></div>Show Downstream</div>
           <label class="toggle-switch"><input type="checkbox" id="toggle-downstream" checked onchange="refreshLayers()"/><span class="toggle-slider"></span></label>
+        </div>
+        <div class="layer-toggle-row">
+          <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--accent5)"></div>Show Upstream Drainage</div>
+          <label class="toggle-switch"><input type="checkbox" id="toggle-upstream" onchange="refreshLayers()"/><span class="toggle-slider"></span></label>
+        </div>
+        <div class="layer-toggle-row">
+          <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--accent6)"></div>Show Catchment Area</div>
+          <label class="toggle-switch"><input type="checkbox" id="toggle-catchment" onchange="refreshLayers()"/><span class="toggle-slider"></span></label>
         </div>
         <div class="layer-toggle-row">
           <div class="layer-toggle-label"><div class="layer-dot" style="background:#94a3b8"></div>Country Borders</div>
@@ -708,6 +770,8 @@
         <div class="leg-row"><div class="leg-circle" style="background:var(--accent);box-shadow:0 0 4px var(--accent)"></div><span>Reservoir</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent2);height:8px;border-radius:2px;opacity:.6"></div><span>Watershed</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent3)"></div><span>Downstream path</span></div>
+        <div class="leg-row"><div class="leg-swatch" style="background:var(--accent5)"></div><span>Upstream drainage</span></div>
+        <div class="leg-row"><div class="leg-swatch" style="background:var(--accent6);height:8px;opacity:.5"></div><span>Catchment area</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent4)"></div><span>Storage data</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent4);opacity:.5"></div><span>Storage impact (seasonal)</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:#94a3b8"></div><span>Country border</span></div>
@@ -818,6 +882,8 @@ function getAccent()  { return cssVar('--accent')  || '#38bdf8'; }
 function getAccent2() { return cssVar('--accent2') || '#4ade80'; }
 function getAccent3() { return cssVar('--accent3') || '#fb923c'; }
 function getAccent4() { return cssVar('--accent4') || '#a78bfa'; }
+function getAccent5() { return cssVar('--accent5') || '#22d3ee'; }
+function getAccent6() { return cssVar('--accent6') || '#facc15'; }
 function getMuted()   { return cssVar('--muted')   || '#64748b'; }
 function getGridLine(){ return cssVar('--grid-line')|| '#243048'; }
 function getTooltipStroke(){ return cssVar('--tooltip-stroke')||'#0b0f1a'; }
@@ -839,6 +905,8 @@ function applyTheme(theme) {
   refreshAllMarkerIcons();
   if (watershedLayer)  watershedLayer.setStyle({ color:getAccent2(), fillColor:getAccent2() });
   if (downstreamLayer) downstreamLayer.setStyle({ color:getAccent3() });
+  if (upstreamLayer)   upstreamLayer.setStyle({ color:getAccent5() });
+  if (catchmentLayer)  catchmentLayer.setStyle({ color:getAccent6(), fillColor:getAccent6() });
   if (countryBordersLayer) countryBordersLayer.setStyle({ color:getBorderColor() });
   if (tsData  && activeId) { renderTimeSeries(); }
   if (stData  && activeId) { renderStorageSeries(); }
@@ -980,8 +1048,8 @@ function makeIcon(active){
 
 var markerMap = {};
 var activeId  = null;
-var wsData=null, dsData=null, stData=null;
-var watershedLayer=null, downstreamLayer=null;
+var wsData=null, dsData=null, stData=null, upData=null, caData=null;
+var watershedLayer=null, downstreamLayer=null, upstreamLayer=null, catchmentLayer=null;
 
 function refreshAllMarkerIcons(){
   Object.keys(markerMap).forEach(function(id){
@@ -1051,8 +1119,9 @@ function handleSearch(){
 //  GeoJSON fetch
 // ─────────────────────────────────────────────────
 var cache={};
-function fetchGeoJSON(filename){
-  var url = GEOJSON_DIR+'/reservoir_corrected/'+filename;
+// subdir defaults to the corrected folder; pass 'reservoir' for the actual (uncorrected) files
+function fetchGeoJSON(filename, subdir){
+  var url = GEOJSON_DIR+'/'+(subdir||'reservoir_corrected')+'/'+filename;
   if (cache[url]) return Promise.resolve(cache[url]);
   return fetch(url).then(function(r){ return r.ok?r.json():null; })
     .then(function(d){ if(d) cache[url]=d; return d; }).catch(function(){ return null; });
@@ -1062,21 +1131,45 @@ function fetchGeoJSON(filename){
 //  Draw layers
 // ─────────────────────────────────────────────────
 function drawLayers(ws,ds){
-  if(watershedLayer){  map.removeLayer(watershedLayer);  watershedLayer=null; }
-  if(downstreamLayer){ map.removeLayer(downstreamLayer); downstreamLayer=null; }
+  [watershedLayer,downstreamLayer,upstreamLayer,catchmentLayer].forEach(function(l){ if(l) map.removeLayer(l); });
+  watershedLayer=downstreamLayer=upstreamLayer=catchmentLayer=null;
+
   var showWS=document.getElementById('toggle-watershed').checked;
   var showDS=document.getElementById('toggle-downstream').checked;
-  var hasWS=false,hasDS=false;
-  if(ws&&showWS){ hasWS=true; watershedLayer=L.geoJSON(ws,{style:{color:getAccent2(),weight:1.5,opacity:Math.min(wsOpacity*6,.9),fillColor:getAccent2(),fillOpacity:wsOpacity*.8}}).addTo(map); map.fitBounds(watershedLayer.getBounds().pad(.1)); }
-  if(ds&&showDS){ hasDS=true; downstreamLayer=L.geoJSON(ds,{style:{color:getAccent3(),weight:2,opacity:dsOpacity},pointToLayer:function(f,ll){ return L.circleMarker(ll,{radius:3,color:getAccent3(),fillColor:getAccent3(),fillOpacity:.8,weight:1}); }}).addTo(map); if(!hasWS) map.fitBounds(downstreamLayer.getBounds().pad(.1)); }
-  return {hasWS:hasWS,hasDS:hasDS};
+  var showUP=document.getElementById('toggle-upstream').checked;
+  var showCA=document.getElementById('toggle-catchment').checked;
+  var hasWS=false,hasDS=false,hasUP=false,hasCA=false;
+
+  // Draw order (bottom → top): catchment polygon, watershed, upstream links, downstream path
+  if(caData&&showCA){
+    hasCA=true;
+    catchmentLayer=L.geoJSON(caData,{style:{color:getAccent6(),weight:1.8,opacity:.9,dashArray:'6 4',fillColor:getAccent6(),fillOpacity:.07}}).addTo(map);
+  }
+  if(ws&&showWS){
+    hasWS=true;
+    watershedLayer=L.geoJSON(ws,{style:{color:getAccent2(),weight:1.5,opacity:Math.min(wsOpacity*6,.9),fillColor:getAccent2(),fillOpacity:wsOpacity*.8}}).addTo(map);
+  }
+  if(upData&&showUP){
+    hasUP=true;
+    upstreamLayer=L.geoJSON(upData,{style:{color:getAccent5(),weight:2,opacity:.9,lineCap:'round',lineJoin:'round'},pointToLayer:function(f,ll){ return L.circleMarker(ll,{radius:2.5,color:getAccent5(),fillColor:getAccent5(),fillOpacity:.8,weight:1}); }}).addTo(map);
+  }
+  if(ds&&showDS){
+    hasDS=true;
+    downstreamLayer=L.geoJSON(ds,{style:{color:getAccent3(),weight:2,opacity:dsOpacity},pointToLayer:function(f,ll){ return L.circleMarker(ll,{radius:3,color:getAccent3(),fillColor:getAccent3(),fillOpacity:.8,weight:1}); }}).addTo(map);
+  }
+
+  // Fit to the largest visible extent
+  var fitTo = catchmentLayer || watershedLayer || upstreamLayer || downstreamLayer;
+  if(fitTo){ try{ map.fitBounds(fitTo.getBounds().pad(.1)); }catch(e){} }
+
+  return {hasWS:hasWS,hasDS:hasDS,hasUP:hasUP,hasCA:hasCA};
 }
 function refreshLayers(){
   if(!activeId) return;
   var res=RESERVOIRS.find(function(r){ return r.id===activeId; });
   var result=drawLayers(wsData,dsData);
   updateCard(activeId,res,result.hasWS,result.hasDS,stData!==null,false);
-  if(!result.hasWS&&!result.hasDS&&res) map.flyTo([res.lat,res.lng],11);
+  if(!result.hasWS&&!result.hasDS&&!result.hasUP&&!result.hasCA&&res) map.flyTo([res.lat,res.lng],11);
 }
 
 // ─────────────────────────────────────────────────
@@ -1087,7 +1180,9 @@ function clearSelection(){
   if (markerMap[activeId]) markerMap[activeId].setIcon(makeIcon(false));
   if(watershedLayer){  map.removeLayer(watershedLayer);  watershedLayer=null; }
   if(downstreamLayer){ map.removeLayer(downstreamLayer); downstreamLayer=null; }
-  activeId=null; wsData=null; dsData=null; tsData=null; stData=null;
+  if(upstreamLayer){   map.removeLayer(upstreamLayer);   upstreamLayer=null; }
+  if(catchmentLayer){  map.removeLayer(catchmentLayer);  catchmentLayer=null; }
+  activeId=null; wsData=null; dsData=null; tsData=null; stData=null; upData=null; caData=null;
   var card=document.getElementById('info-card');
   card.className='';
   card.innerHTML='<div style="color:var(--muted);font-size:11px;padding-top:2px;">Select a reservoir to view details</div>';
@@ -1109,11 +1204,15 @@ function selectFeature(id){
     fetchGeoJSON('watershed_'+gww+'.geojson'),
     fetchGeoJSON('downstream_'+gww+'.geojson'),
     fetchGeoJSON('timeseries_'+gww+'.json'),
-    fetchGeoJSON('storage_'+gww+'.json')
+    fetchGeoJSON('storage_'+gww+'.json'),
+    fetchGeoJSON('upstream_'+gww+'.geojson','reservoir'),
+    fetchGeoJSON('catchment_'+gww+'.geojson','reservoir')
   ]).then(function(results){
+    if(activeId!==id) return;   // a newer selection superseded this one
     wsData=results[0]; dsData=results[1]; tsData=results[2]; stData=results[3];
+    upData=results[4]; caData=results[5];
     var drawn=drawLayers(wsData,dsData);
-    if(!drawn.hasWS&&!drawn.hasDS&&res) map.flyTo([res.lat,res.lng],11);
+    if(!drawn.hasWS&&!drawn.hasDS&&!drawn.hasUP&&!drawn.hasCA&&res) map.flyTo([res.lat,res.lng],11);
     updateCard(id,res,drawn.hasWS,drawn.hasDS,stData!==null,false);
     showTimeSeries();
     showStorageSeries();

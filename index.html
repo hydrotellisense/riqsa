@@ -20,6 +20,7 @@
     --accent4:    #a78bfa;   /* storage — violet */
     --accent5:    #22d3ee;   /* upstream drainage — cyan */
     --accent6:    #facc15;   /* catchment area — yellow */
+    --basin:      #f472b6;   /* basin borders — pink */
     --text:       #e2e8f0;
     --muted:      #64748b;
     --map-bg:     #0e1520;
@@ -50,6 +51,7 @@
     --accent4:    #7c3aed;
     --accent5:    #0891b2;
     --accent6:    #ca8a04;
+    --basin:      #be185d;
     --text:       #0f172a;
     --muted:      #64748b;
     --subnav-bg:      #fff4ec;
@@ -480,6 +482,7 @@
     <li><b>Reservoirs &amp; dams</b>: Global Dam Watch (GDW)</li>
     <li><b>Reservoir storage</b>: Global Water Watch (GWW)</li>
     <li><b>River network &amp; catchments</b>: MERIT-Hydro</li>
+    <li><b>Basin borders</b>: HydroBASINS (Lehner &amp; Grill, 2013)</li>
     <li><b>Country borders</b>: Natural Earth</li>
   </ul>
 
@@ -699,6 +702,10 @@
           <div class="layer-toggle-label"><div class="layer-dot" style="background:#94a3b8"></div>Country Borders</div>
           <label class="toggle-switch"><input type="checkbox" id="toggle-borders" checked onchange="updateCountryBorders()"/><span class="toggle-slider"></span></label>
         </div>
+        <div class="layer-toggle-row">
+          <div class="layer-toggle-label"><div class="layer-dot" style="background:var(--basin)"></div>Basin Borders</div>
+          <label class="toggle-switch"><input type="checkbox" id="toggle-basins" onchange="updateBasins()"/><span class="toggle-slider"></span></label>
+        </div>
       </div>
 
       <div class="panel-spacer"></div>
@@ -775,6 +782,7 @@
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent4)"></div><span>Storage data</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:var(--accent4);opacity:.5"></div><span>Storage impact (seasonal)</span></div>
         <div class="leg-row"><div class="leg-swatch" style="background:#94a3b8"></div><span>Country border</span></div>
+        <div class="leg-row"><div class="leg-swatch" style="background:repeating-linear-gradient(90deg,var(--basin) 0 6px,transparent 6px 9px)"></div><span>Basin border</span></div>
       </div>
 
     </div><!-- /panel-scroll -->
@@ -908,6 +916,7 @@ function applyTheme(theme) {
   if (upstreamLayer)   upstreamLayer.setStyle({ color:getAccent5() });
   if (catchmentLayer)  catchmentLayer.setStyle({ color:getAccent6(), fillColor:getAccent6() });
   if (countryBordersLayer) countryBordersLayer.setStyle({ color:getBorderColor() });
+  if (basinLayer) basinLayer.setStyle({ color:getBasinColor() });
   if (tsData  && activeId) { renderTimeSeries(); }
   if (stData  && activeId) { renderStorageSeries(); }
   if (document.getElementById('ts-modal').classList.contains('visible')) renderTimeSeriesModal();
@@ -991,6 +1000,7 @@ function setBasemap(bm, userInitiated) {
 })();
 setBasemap(BASEMAPS.find(function(b){ return b.id==='light'; }) || BASEMAPS[0], false);
 loadCountryBorders();
+loadBasins();
 function toggleMapControls(){
   var p=document.getElementById('map-control-panel'),b=document.getElementById('map-control-toggle');
   var o=p.classList.toggle('open'); b.classList.toggle('open',o);
@@ -1028,6 +1038,37 @@ function updateCountryBorders(){
   document.querySelectorAll('.borders-row').forEach(function(r){ r.classList.toggle('active',on); });
   if (on) loadCountryBorders();
   else if (countryBordersLayer){ map.removeLayer(countryBordersLayer); countryBordersLayer=null; }
+}
+
+// ─────────────────────────────────────────────────
+//  Basin borders (geojson/basins.geojson, built by export_basins.py)
+// ─────────────────────────────────────────────────
+var basinLayer=null, basinData=null;
+function getBasinColor(){ return cssVar('--basin') || '#be185d'; }
+function loadBasins(){
+  if (basinData) { applyBasins(); return; }
+  fetch(GEOJSON_DIR+'/basins.geojson')
+    .then(function(r){ return r.ok?r.json():null; })
+    .then(function(d){ if(!d) return; basinData=d; if(document.getElementById('toggle-basins').checked) applyBasins(); })
+    .catch(function(){});
+}
+function applyBasins(){
+  if (!basinData) return;
+  if (basinLayer){ map.removeLayer(basinLayer); basinLayer=null; }
+  basinLayer = L.geoJSON(basinData,{
+    style:{color:getBasinColor(),weight:2,opacity:.85,dashArray:'8 5',fill:false},
+    onEachFeature:function(f,layer){
+      var p=f.properties||{};
+      if (p.name) layer.bindTooltip('<b>'+p.name+'</b>'+(p.n_reservoirs?'<br/>'+p.n_reservoirs+' reservoirs':''),{sticky:true});
+    }
+  }).addTo(map);
+  basinLayer.bringToBack();
+  if (countryBordersLayer) countryBordersLayer.bringToBack();
+  if (currentTileLayer && currentTileLayer.bringToBack) currentTileLayer.bringToBack();
+}
+function updateBasins(){
+  if (document.getElementById('toggle-basins').checked) loadBasins();
+  else if (basinLayer){ map.removeLayer(basinLayer); basinLayer=null; }
 }
 function updateBorderWeight(val){ borderWeight=val/10; document.getElementById('border-weight-val').textContent=borderWeight.toFixed(1); if(countryBordersLayer) countryBordersLayer.setStyle({weight:borderWeight}); }
 function updateBorderOpacity(val){ borderOpacity=val/100; document.getElementById('border-opacity-val').textContent=val+'%'; if(countryBordersLayer) countryBordersLayer.setStyle({opacity:borderOpacity}); }

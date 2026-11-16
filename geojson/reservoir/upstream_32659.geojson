@@ -1,9 +1,0 @@
-{
-"type": "FeatureCollection",
-"name": "upstream_32659",
-"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
-"xy_coordinate_resolution": 1e-05,
-"features": [
-{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ 80.57167, 23.09417 ], [ 80.5725, 23.09333 ], [ 80.57167, 23.08917 ], [ 80.57333, 23.08667 ], [ 80.575, 23.08583 ], [ 80.575, 23.08 ], [ 80.57417, 23.07917 ], [ 80.57417, 23.07667 ], [ 80.57833, 23.07583 ] ] } }
-]
-}

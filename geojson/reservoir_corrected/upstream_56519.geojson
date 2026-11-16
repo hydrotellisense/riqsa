@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "upstream_56519",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-05,
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ 75.9525, 23.46833 ], [ 75.95083, 23.46833 ], [ 75.95, 23.4675 ], [ 75.95, 23.46583 ], [ 75.94833, 23.465 ], [ 75.94833, 23.46417 ], [ 75.9475, 23.465 ], [ 75.94583, 23.46417 ], [ 75.94417, 23.46083 ], [ 75.94, 23.45917 ] ] } }
+]
+}

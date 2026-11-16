@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "upstream_17313",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-05,
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "LineString", "coordinates": [ [ 82.99, 24.185 ], [ 82.98833, 24.18333 ], [ 82.98833, 24.18167 ], [ 82.98917, 24.18083 ], [ 82.98917, 24.17583 ], [ 82.99167, 24.17 ], [ 82.98833, 24.16583 ] ] } }
+]
+}
